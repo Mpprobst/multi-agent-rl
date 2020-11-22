@@ -1,14 +1,11 @@
 """
-actor_critic.py
-Author:
-Purpose: Implements an actor critic agent
+random.py
+Purpose: Implements an agent that makes random decisions
 """
 
-import cnn
-
-class actor_critic_agent:
+class random_agent:
     def __init__(self, env, lr):
-        self.name = "actor_critic"
+        self.name = "random"
 
     def best_action(self, state):
         return 0
