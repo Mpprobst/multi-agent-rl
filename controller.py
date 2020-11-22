@@ -10,9 +10,9 @@ import actor_critic
 import reinforce
 import random_agent
 
-AGENT_MAP = {'ac' : reinforce.reinforce_agent,
-             'reinforce' : actor_critic.actor_critic_agent,
-             'random' : random_agent.random_agent }
+AGENT_MAP = {'ac' : reinforce.ReinforceAgent,
+             'reinforce' : actor_critic.ACAgent,
+             'random' : random_agent.RandomAgent }
 
 parser = argparse.ArgumentParser(description='Define the problem to solve.')
 parser.add_argument('--agent1', choices=AGENT_MAP.keys(), default='random', help='Can be ac, reinforce, or random')
@@ -23,4 +23,4 @@ args = parser.parse_args()
 
 agent_func = AGENT_MAP[args.agent1]
 
-env = double_dunk.double_dunk(args.episodes, agent_func, args.verbose)
+env = double_dunk.DoubleDunk(args.episodes, agent_func, args.verbose)

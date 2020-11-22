@@ -6,7 +6,7 @@ Purpose: Implements an actor critic agent
 
 import cnn
 
-class actor_critic_agent:
+class ACAgent:
     def __init__(self, env, lr):
         self.name = "actor_critic"
 

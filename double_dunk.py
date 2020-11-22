@@ -10,7 +10,7 @@ import numpy as np
 TEST_INDEX = 100   # test after every 1000 training episodes
 NUM_TESTS = 10
 
-class double_dunk:
+class DoubleDunk:
     def __init__(self, episodes, agent_func, verbose):
         env = gym.make('DoubleDunk-v0')
         print(f'num actions: {env.action_space.n}')
