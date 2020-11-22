@@ -3,7 +3,7 @@ random.py
 Purpose: Implements an agent that makes random decisions
 """
 
-class random_agent:
+class RandomAgent:
     def __init__(self, env, lr):
         self.name = "random"
 

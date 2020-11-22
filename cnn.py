@@ -8,19 +8,19 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class cnn(nn.Module):
-    def __init__(self, inputDims, outputDims):
+    def __init__(self, input_dims, output_dims):
         super(Net, self).__init__()
-        self.outputDims = outputDims
-        self.inputDims = inputDims
-        self.fc1 = nn.Linear(self.inputDims, 32)    #first layer
+        self.output_dims = output_dims
+        self.input_dims = input_dims
+        self.fc1 = nn.Linear(self.input_dims, 32)    #first layer
         self.fc2 = nn.Linear(32, 16)                #second layer
-        self.fc3 = nn.Linear(16, self.outputDims)   #output layer
+        self.fc3 = nn.Linear(16, self.output_dims)   #output layer
         self.device = T.device('cpu')
         self.to(self.device)
 
-    #Implements a feed forward network. state an array of 4 floats describing current state
-    def Forward(self, state):
-        x = F.relu(self.fc1(state))
+    #Implements a feed forward network
+    def forward(self, input):
+        x = F.relu(self.fc1(input))
         x = F.relu(self.fc2(x))
-        actions = self.fc3(x)
-        return actions
+        out = self.fc3(x)
+        return out

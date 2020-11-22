@@ -14,7 +14,7 @@ import torch.optim as optim
 GAMMA = 0.98
 BATCH_SIZE = 5
 
-class reinforce_agent:
+class ReinforceAgent:
     def __init__(self, env, lr):
         self.name = 'REINFORCE'
         self.epsilon = 1
