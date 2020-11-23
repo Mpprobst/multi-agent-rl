@@ -18,9 +18,8 @@ class ReinforceAgent:
     def __init__(self, env, lr):
         self.name = 'REINFORCE'
         self.epsilon = 1
-        self.state_dims = env.observation_space.shape[0]
         self.n_actions = env.action_space.n
-        self.net = cnn.cnn(self.state_dims, self.n_actions)
+        self.net = cnn.CNN(self.n_actions)
         self.optimizer = optim.Adam(self.net.parameters(), lr=lr)
         self.recent_action = None
         self.rewards = []
@@ -31,22 +30,15 @@ class ReinforceAgent:
         self.max_ep_length = 0
         self.losses = []
 
-    def get_state_tensor(self, state):
-        return T.tensor(state).to(self.net.device).float()
-
-    def best_action(self, state):
-        state_tensor = self.get_state_tensor(state)
-        probabilities = F.softmax(self.net.Forward(state_tensor), dim=0)
+    def get_action(self, env, state):
+        probabilities = F.softmax(self.net.forward(state), dim=0)
         action_probs = T.distributions.Categorical(probabilities)
         action = action_probs.sample()
         log_probs = action_probs.log_prob(action)
         self.recent_action = log_probs
         return action.item()
 
-    def get_action(self, env, state):
-        return self.best_action(state)
-
-    def update(self, state, nextState, action, reward):
+    def update(self, reward):
         self.actions.append(self.recent_action)
         self.rewards.append(reward)
 
@@ -89,6 +81,7 @@ class ReinforceAgent:
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
+
             self.losses.append(loss.item())
 
             self.action_memory = []

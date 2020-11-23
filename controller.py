@@ -10,8 +10,8 @@ import actor_critic
 import reinforce
 import random_agent
 
-AGENT_MAP = {'ac' : reinforce.ReinforceAgent,
-             'reinforce' : actor_critic.ACAgent,
+AGENT_MAP = {'reinforce' : reinforce.ReinforceAgent,
+             'ac' : actor_critic.ACAgent,
              'random' : random_agent.RandomAgent }
 
 parser = argparse.ArgumentParser(description='Define the problem to solve.')
