@@ -6,6 +6,7 @@ Purpose: Solve Cartpole and Lunar Lander openAI gym environments
 import argparse
 import csv
 import double_dunk
+import soccer_env
 import actor_critic
 import reinforce
 import random_agent
@@ -21,6 +22,8 @@ parser.add_argument('--episodes', type=int, default = 500, help='Number of episo
 parser.add_argument('--verbose', help='Visualize the environment.', action='store_true')
 args = parser.parse_args()
 
-agent_func = AGENT_MAP[args.agent1]
+agent_func1 = AGENT_MAP[args.agent1]
+agent_func2 = AGENT_MAP[args.agent1]
 
-env = double_dunk.DoubleDunk(args.episodes, agent_func, args.verbose)
+env = soccer_env.SoccerEnv(args.episodes, [agent_func1], [agent_func2], args.verbose)
+#env = double_dunk.DoubleDunk(args.episodes, agent_func, args.verbose)
