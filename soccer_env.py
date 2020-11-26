@@ -32,6 +32,9 @@ class SoccerEnv:
 
         mas = MARL(agents_list=agents)
 
+        for agent in agents:
+            agent.set_mas(mas)
+
         filename = f'results/dd_{agent.name}.csv'
         with open(filename, 'w', newline = '') as csvfile:
             writer = csv.writer(csvfile, delimiter = ',')
@@ -50,7 +53,6 @@ class SoccerEnv:
                     writer.writerow([i / TEST_INDEX, np.average(scores)])
                 else:
                     self.run(mas, env, is_test=False)
-                    agent.learn()
                 ep_times.append(time.time() - episode_time)
         env.close()
 
@@ -59,9 +61,10 @@ class SoccerEnv:
         if not is_test:
             mas.learn(env, nb_timesteps=1)
 
-        if is_test and self.verbose:
-            #Render visualizes the environment
-            mas.test(env, nb_timesteps=1, time_laps=0.5)
-            env.render()
+        if is_test:
+            score = mas.test(env, nb_episodes=1, time_laps=0.25)
+            if (self.verbose):
+                env.render()
+            print(f'value = {score}')
 
         return score

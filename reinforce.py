@@ -17,6 +17,7 @@ BATCH_SIZE = 5
 class ReinforceAgent:
     def __init__(self, env, lr):
         self.name = 'REINFORCE'
+        self.env = env
         self.epsilon = 1
         self.n_actions = env.action_space.n
         self.net = cnn.CNN(self.n_actions)
@@ -30,13 +31,16 @@ class ReinforceAgent:
         self.max_ep_length = 0
         self.losses = []
 
-    def get_action(self, env, state):
+    def action(self, state):
         probabilities = F.softmax(self.net.forward(state), dim=0)
         action_probs = T.distributions.Categorical(probabilities)
         action = action_probs.sample()
         log_probs = action_probs.log_prob(action)
         self.recent_action = log_probs
         return action.item()
+
+    def greedy_action(self, state):
+        return action(state)
 
     def update(self, reward):
         self.actions.append(self.recent_action)
