@@ -256,6 +256,7 @@ class TrainableAgent(Agent):
                 env.render()
                 time.sleep(time_laps)
             for _ in range(timestep, timestep + max_num_step):
+                print("obs:", obs)
                 action = self.action(obs)
                 obs2, rew, done, _ = env.step(action)
 

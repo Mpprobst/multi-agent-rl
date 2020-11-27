@@ -1,20 +1,9 @@
 """
 actor_critic.py
 Author:
-Purpose: Implements an actor critic agent
+Purpose: Helper to create a MAACAgent
 """
 
-import cnn
-
-class ACAgent:
-    def __init__(self, env, lr):
-        self.name = "actor_critic"
-
-    def get_action(self, env, state):
-        return 0
-
-    def update(self, reward):
-        return 0
-
-    def learn(self):
-        return 0
+import marl.agent as Agent
+import marl.model as Model
+import marl.policy as Policy

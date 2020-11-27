@@ -7,12 +7,12 @@ import argparse
 import csv
 import double_dunk
 import soccer_env
-import actor_critic
+import marl.agent as agent
 import reinforce
 import random_agent
 
 AGENT_MAP = {'reinforce' : reinforce.ReinforceAgent,
-             'ac' : actor_critic.ACAgent,
+             'ac' : agent.MAACAgent,
              'random' : random_agent.RandomAgent }
 
 "TODO: add option to include agents on the same team to be different types of agents"

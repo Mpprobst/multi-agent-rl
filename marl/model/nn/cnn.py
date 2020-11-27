@@ -15,10 +15,8 @@ class FootCnn(nn.Module):
         self.c, self.h, self.w = shape
         self.a = my_actions
         self.seq = nn.Sequential(
-            nn.ZeroPad2d((1, 1, 1, 1)),
             nn.Conv2d(self.c, 32, 3),
             nn.ReLU(),
-            nn.ZeroPad2d((1, 1, 1, 1)),
             nn.Conv2d(32,16,3),
             nn.ReLU(),
             nn.Flatten(),
@@ -26,7 +24,7 @@ class FootCnn(nn.Module):
             nn.Linear(350, self.a)
         )
         self.a2 = my_actions
-            
+
     def forward(self, x):
         x = self.seq(x)
         return x
