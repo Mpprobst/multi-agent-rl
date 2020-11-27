@@ -145,13 +145,6 @@ class MAACAgent(MAPGAgent):
     :param name: (str) The name of the agent
     """
     def __init__(self, env, lr):
-        #actor_model = Model.cnn.FootCnn([3, env.height, env.width], env.action_space.n)
-        #critic_model = Model.cnn.FootCnn([3, env.height, env.width], env.action_space.n)
-        actor_model = Model.mlpnet.MlpNet(env.observation_space.n, env.action_space.n)
-        critic_model = Model.mlpnet.MlpNet(env.observation_space.n, env.action_space.n)
-
-        policy = Policy.StochasticPolicy(actor_model, observation_space=env.observation_space, action_space=env.action_space)
-
         MAPGAgent.__init__(self, critic_model=critic_model, actor_policy=policy, actor_model=actor_model, observation_space=env.observation_space, action_space=env.action_space, index=None, experience="ReplayMemory-1000", exploration="EpsGreedy", lr_actor=lr, lr_critic=lr, gamma=0.98, batch_size=32, name="MAACAgent")
 
     def update_actor(self, local_batch, global_batch):
