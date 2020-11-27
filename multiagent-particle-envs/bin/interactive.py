@@ -25,15 +25,18 @@ if __name__ == '__main__':
     policies = [InteractivePolicy(env,i) for i in range(env.n)]
     # execution loop
     obs_n = env.reset()
-    while True:
+    step_count = 0
+    done_n = []
+    while step_count < 200 and sum(done_n) == 0:# and done_n == False:
         # query for action from each agent's policy
         act_n = []
         for i, policy in enumerate(policies):
             act_n.append(policy.action(obs_n[i]))
         # step environment
         obs_n, reward_n, done_n, _ = env.step(act_n)
+        step_count += 1
         # render all agent views
         env.render()
         # display rewards
-        #for agent in env.world.agents:
-        #    print(agent.name + " reward: %0.3f" % env._get_reward(agent))
+        for agent in env.world.agents:
+            print(agent.name + " reward: %0.3f" % env._get_reward(agent))
