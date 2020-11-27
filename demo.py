@@ -22,7 +22,7 @@ act_s = env.action_space
 critic_model = MlpNet(800,1, hidden_size=[6400, 3200])
 actor_model = MlpNet(800,5, hidden_size=[6400, 3200])
 print(actor_model)
-ac_agent1 = DeepACAgent(critic_model, actor_model, obs_s, act_s, experience="ReplayMemory-50000", exploration="EpsGreedy", name="SoccerJ1")
+ac_agent1 = MAACAgent(critic_model, actor_model, obs_s, act_s, experience="ReplayMemory-50000", exploration="EpsGreedy", name="SoccerJ1")
 # ac_agent2 = MAACAgent(critic_model, actor_model, obs_s, act_s, experience="ReplayMemory-50000", exploration="EpsGreedy", name="SoccerJ2")
 #This is throwing error. If we can debug we can easily set up game. Why is not it accepting the actor model?
 
