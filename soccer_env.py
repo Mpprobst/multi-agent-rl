@@ -23,11 +23,13 @@ class SoccerEnv:
         agents = []
 
         for agent_func in agent_funcs1:
-            agent = agent_func(env, 0.1)
+            agent = agent_func(observation_space=env.observation_space,
+                               action_space=env.action_space, lr=0.1)
             agents.append(agent)
 
         for agent_func in agent_funcs2:
-            agent = agent_func(env, 0.1)
+            agent = agent_func(observation_space=env.observation_space,
+                               action_space=env.action_space, lr=0.1)
             agents.append(agent)
 
         mas = MARL(agents_list=agents)

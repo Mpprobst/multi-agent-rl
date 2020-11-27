@@ -2,9 +2,7 @@ import marl
 from marl.agent import QAgent, TrainableAgent, MATrainable
 from marl.policy import StochasticPolicy, DeterministicPolicy
 from marl.tools import super_cat
-import marl.model as Model
-import marl.policy as Policy
-
+from marl.model.nn import MlpNet
 
 import torch
 import torch.nn as nn
@@ -144,8 +142,10 @@ class MAACAgent(MAPGAgent):
     :param use_target_net: (bool) If true use a target model
     :param name: (str) The name of the agent
     """
-    def __init__(self, env, lr):
-        MAPGAgent.__init__(self, critic_model=critic_model, actor_policy=policy, actor_model=actor_model, observation_space=env.observation_space, action_space=env.action_space, index=None, experience="ReplayMemory-1000", exploration="EpsGreedy", lr_actor=lr, lr_critic=lr, gamma=0.98, batch_size=32, name="MAACAgent")
+    def __init__(self, observation_space, action_space, index=None, experience="ReplayMemory-1000", exploration="EpsGreedy", lr=0.001, gamma=0.95, batch_size=32, tau=0.01, use_target_net=False, name="MAACAgent"):
+        critic_model = MlpNet(800,1, hidden_size=[6400, 3200])
+        actor_model = MlpNet(800,5, hidden_size=[6400, 3200])
+        super(MAACAgent, self).__init__(critic_model=critic_model, actor_policy='StochasticPolicy', actor_model=actor_model, observation_space=observation_space, action_space=action_space, index=index, experience=experience, exploration=exploration, lr_actor=lr, lr_critic=lr, gamma=gamma, batch_size=batch_size, name=name)
 
     def update_actor(self, local_batch, global_batch):
         self.actor_optimizer.zero_grad()

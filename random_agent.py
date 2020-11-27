@@ -13,8 +13,8 @@ from marl.exploration import ExplorationProcess
 from marl.experience import ReplayMemory, PrioritizedReplayMemory
 
 class RandomAgent(TrainableAgent, MATrainable):
-    def __init__(self, env, lr, index=None, mas=None):
-        TrainableAgent.__init__(self, policy=policy.RandomPolicy(env.action_space), observation_space=env.observation_space, action_space=env.action_space, gamma=0.98, lr=lr, name="RandomAgent", )
+    def __init__(self, observation_space, action_space, lr, index=None, mas=None):
+        TrainableAgent.__init__(self, policy=policy.RandomPolicy(action_space), observation_space=observation_space, action_space=action_space, gamma=0.98, lr=lr, name="RandomAgent", )
         MATrainable.__init__(self, mas, index)
 
     def update_model(self, t):

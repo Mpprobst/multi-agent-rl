@@ -72,12 +72,7 @@ class StochasticPolicy(ModelBasedPolicy):
     """
 
     def __init__(self, model, observation_space=None, action_space=None):
-<<<<<<< HEAD
-        #super(StochasticPolicy, self).__init__()
-        ModelBasedPolicy.__init__(self, model)
-=======
         super(StochasticPolicy, self).__init__(model=model)
->>>>>>> subash_try
 
         self.observation_space = observation_space
         self.action_space = action_space
@@ -107,13 +102,8 @@ class DeterministicPolicy(ModelBasedPolicy):
     """
 
     def __init__(self, model, observation_space=None, action_space=None):
-<<<<<<< HEAD
-        #super(DeterministicPolicy, self).__init__()
-        ModelBasedPolicy.__init__(self, model)
-=======
         super(DeterministicPolicy, self).__init__()
 
->>>>>>> subash_try
         self.observation_space = observation_space
         self.action_space = action_space
 
@@ -129,12 +119,3 @@ class DeterministicPolicy(ModelBasedPolicy):
         with torch.no_grad():
             action = np.array(self.model(observation))
             return np.clip(action, self.low, self.high)
-<<<<<<< HEAD
-"""
-class ReinforcePolicy(ModelBasedPolicy):
-
-    def __init__(self, model, ):
-        super(DeterministicPolicy, self).__init__()
-"""
-=======
->>>>>>> subash_try
