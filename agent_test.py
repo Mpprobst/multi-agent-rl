@@ -24,9 +24,9 @@ agent = DQNAgent(actor_model, obs_s, act_s, experience="ReplayMemory-5000", expl
 agent = QTableAgent(obs_s, act_s, exploration="EpsGreedy", gamma=0.99, lr=0.1, target_update_freq=None, name="QTableAgent")
 agent = DeepACAgent(critic_model,actor_model,obs_s, act_s, experience="ReplayMemory-1000", exploration="EpsGreedy", lr_actor=0.001, lr_critic=0.001, gamma=0.95, batch_size=32, target_update_freq=None, name="DeepACAgent")
 agent = PHCAgent(obs_s, act_s, exploration="EpsGreedy", delta=0.01, lr_critic=0.01, gamma=0.95, target_update_freq=None, name="PHCAgent")
-agent = DDPGAgent(critic_model, actor_model, obs_s, act_s, experience="ReplayMemory-1000", exploration="OUNoise", lr_actor=0.01, lr_critic=0.01, gamma=0.95, batch_size=32, target_update_freq=None, name="DDPGAgent")
-agent = MADDPGAgent(critic_model, actor_model, obs_s, act_s, index=None, experience="ReplayMemory-1000", exploration="OUNoise", lr_actor=0.01, lr_critic=0.01, gamma=0.95, batch_size=32, tau=0.01, use_target_net=100, name="MADDPGAgent")
-# # Train the agent for 100 000 timesteps
+#agent = DDPGAgent(critic_model, actor_model, obs_s, act_s, experience="ReplayMemory-1000", exploration="OUNoise", lr_actor=0.01, lr_critic=0.01, gamma=0.95, batch_size=32, target_update_freq=None, name="DDPGAgent")
+#agent = MADDPGAgent(critic_model, actor_model, obs_s, act_s, index=None, experience="ReplayMemory-1000", exploration="OUNoise", lr_actor=0.01, lr_critic=0.01, gamma=0.95, batch_size=32, tau=0.01, use_target_net=100, name="MADDPGAgent")
+# Train the agent for 100 000 timesteps
 #agent.learn(env, nb_timesteps=100000)
 
 # Test the agent for 10 episodes
