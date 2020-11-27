@@ -46,8 +46,12 @@ class SoccerEnv:
                     scores = []
                     for t in range(NUM_TESTS):
                         value = self.run(mas, env, is_test=True)
+                        value = value['mean_by_episode'][0][0]
                         scores.append(value)
-                    print(f'TEST %d:\t Avg Reward = %.3f\tTime=%.5f' %(int(i / TEST_INDEX), np.average(scores), (time.time() - test_time)))
+
+                    avgs = np.mean(scores, axis=0)
+                    rewardString = ["%.3f" % avg for avg in avgs]
+                    print(f'TEST  %d:\t Avg Rewards = %s\tTime=%.5f' %(int(i / TEST_INDEX), rewardString, (time.time() - test_time)))
                     agent.losses = []
                     test_time = time.time()
                     writer.writerow([i / TEST_INDEX, np.average(scores)])
@@ -59,12 +63,11 @@ class SoccerEnv:
     def run(self, mas, env, is_test=False):
         score = 0
         if not is_test:
-            mas.learn(env, nb_timesteps=1)
+            mas.learn(env, nb_timesteps=1, render=self.verbose)
 
         if is_test:
-            score = mas.test(env, nb_episodes=1, time_laps=0.25)
+            score = mas.test(env, nb_episodes=1, time_laps=0.25, render=self.verbose)
             if (self.verbose):
                 env.render()
-            print(f'value = {score}')
 
         return score
