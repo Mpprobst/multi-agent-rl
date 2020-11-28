@@ -17,10 +17,10 @@ class RandomAgent(policy.Policy):
 
         actions = env.action_space[self.id] # env.action_space is a list of Discrete actions for every agent
         if isinstance(actions, multiagent.multi_discrete.MultiDiscrete):
-            self.actions = actions.shape
+            self.action_space = actions.shape
         else:
-            self.actions = actions.n
-        print(self.actions)
+            self.action_space = actions.n
+        print(self.action_space)
 
     # returns an action randomly.
     def action(self, state):

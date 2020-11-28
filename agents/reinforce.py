@@ -3,6 +3,7 @@ reinforce.py
 Author: Michael Probst
 Purpose: Implements an agent using the REINFORCE policy gradient algorithm
 """
+import multiagent
 import multiagent.policy as policy
 import gym
 import numpy as np
@@ -22,8 +23,14 @@ class ReinforceAgent(policy.Policy):
         self.name = f'REINFORCE_{agent_index}'
         #self.env = env
         self.env = env
-        self.actions = env.action_space[self.id].n  # env.action_space is a list of Discrete actions for every agent
-        self.net = nn.NN(env.observation_space, self.actions)
+        actions = env.action_space[self.id] # env.action_space is a list of Discrete actions for every agent
+        if isinstance(actions, multiagent.multi_discrete.MultiDiscrete):
+            self.actions_space = actions.shape
+        else:
+            self.action_space = actions.n
+
+        self.observation_space = env.observation_space[self.id].shape[0]
+        self.net = nn.NN(self.observation_space, self.action_space)
         self.optimizer = optim.Adam(self.net.parameters(), lr=lr)
         self.recent_action = None
         self.rewards = []
@@ -41,8 +48,8 @@ class ReinforceAgent(policy.Policy):
         log_probs = action_probs.log_prob(action)
         self.recent_action = log_probs
 
-        a = np.zeros(self.actions)
-        a[action.item] = 1
+        a = np.zeros(self.action_space)
+        a[action.item()] = 1
         return np.concatenate([a, np.zeros(self.env.world.dim_c)])
 
     def update(self, reward):

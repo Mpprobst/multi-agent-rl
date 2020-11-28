@@ -23,6 +23,7 @@ class Interactive():
         # render call to create viewer window (necessary only for interactive policies)
         if verbose:
             env.render()
+        "TODO: determine which agents are good and bad and give them different policies"
         # create interactive policies for each agent
         policies = [good_agents(env, i, 0.1) for i in range(env.n)]
 
