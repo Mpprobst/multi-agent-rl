@@ -15,14 +15,15 @@ import torch.optim as optim
 GAMMA = 0.98
 BATCH_SIZE = 5
 
-class ReinforceAgent(Policy):
+class ReinforceAgent(policy.Policy):
     def __init__(self, env, agent_index, lr):
         super(ReinforceAgent, self).__init__()
         self.id = agent_index
         self.name = f'REINFORCE_{agent_index}'
         #self.env = env
-        #self.n_actions = env.action_space.n
-        self.net = nn.NN(env.observation_space.n, env.action_space.ns)
+        self.env = env
+        self.actions = env.action_space[self.id].n  # env.action_space is a list of Discrete actions for every agent
+        self.net = nn.NN(env.observation_space, self.actions)
         self.optimizer = optim.Adam(self.net.parameters(), lr=lr)
         self.recent_action = None
         self.rewards = []
@@ -39,7 +40,10 @@ class ReinforceAgent(Policy):
         action = action_probs.sample()
         log_probs = action_probs.log_prob(action)
         self.recent_action = log_probs
-        return action.item()
+
+        a = np.zeros(self.actions)
+        a[action.item] = 1
+        return np.concatenate([a, np.zeros(self.env.world.dim_c)])
 
     def update(self, reward):
         self.actions.append(self.recent_action)

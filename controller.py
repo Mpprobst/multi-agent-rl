@@ -6,12 +6,14 @@ Purpose: Solve Cartpole and Lunar Lander openAI gym environments
 import argparse
 import csv
 import double_dunk
-import agents
-import multiagent_envs.bin.interactive as Interactive
+import agents.reinforce as reinforce
+import agents.actor_critic as ac
+import agents.random_agent as random_agent
+import bin.interactive as Interactive
 
-AGENT_MAP = {'reinforce' : agents.reinforce.ReinforceAgent,
-             'ac' : agents.actor_critic.ACAgent,
-             'random' : agents.random_agent.RandomAgent }
+AGENT_MAP = {'reinforce' : reinforce.ReinforceAgent,
+             'ac' : ac.ACAgent,
+             'random' : random_agent.RandomAgent }
 
 parser = argparse.ArgumentParser(description='Define the problem to solve.')
 parser.add_argument('--agent1', choices=AGENT_MAP.keys(), default='random', help='Can be ac, reinforce, or random')
@@ -24,6 +26,6 @@ args = parser.parse_args()
 agent_func1 = AGENT_MAP[args.agent1]
 agent_func2 = AGENT_MAP[args.agent1]
 
-Interactive.Interactive(args.scenario, args.episodes, agent_func1, agent_func2)
+Interactive.Interactive(args.scenario, args.episodes, agent_func1, agent_func2, args.verbose)
 
-env = double_dunk.DoubleDunk(args.episodes, agent_func, args.verbose)
+#env = double_dunk.DoubleDunk(args.episodes, agent_func, args.verbose)
