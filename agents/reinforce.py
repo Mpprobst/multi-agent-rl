@@ -25,7 +25,7 @@ class ReinforceAgent(policy.Policy):
         self.env = env
         actions = env.action_space[self.id] # env.action_space is a list of Discrete actions for every agent
         if isinstance(actions, multiagent.multi_discrete.MultiDiscrete):
-            self.actions_space = actions.shape
+            self.action_space = actions.shape
         else:
             self.action_space = actions.n
 
