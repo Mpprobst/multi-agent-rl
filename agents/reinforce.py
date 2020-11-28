@@ -42,6 +42,8 @@ class ReinforceAgent(policy.Policy):
         self.losses = []
 
     def action(self, obs):
+        #print(f'{self.name} saw obs size {len(obs)}. expects size {self.observation_space}')
+
         probabilities = F.softmax(self.net.forward(obs), dim=0)
         action_probs = T.distributions.Categorical(probabilities)
         action = action_probs.sample()
@@ -57,6 +59,7 @@ class ReinforceAgent(policy.Policy):
         self.rewards.append(reward)
 
     def learn(self):
+        #print(f'learning on: {self.rewards}')
         Gt = np.zeros_like(self.rewards, dtype=np.float64)
         for t in range(len(self.rewards)):
             sum = 0

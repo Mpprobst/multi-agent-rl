@@ -9,7 +9,7 @@ from multiagent.environment import MultiAgentEnv
 from multiagent.policy import InteractivePolicy
 import multiagent.scenarios as scenarios
 
-TEST_INDEX = 10   # test after every 10 training episodes
+TEST_INDEX = 100   # test after every 10 training episodes
 NUM_TESTS = 10
 
 class Interactive():
@@ -46,9 +46,10 @@ class Interactive():
                         scores.append(value)
 
                     avg_scores = np.mean(scores, axis=0)
-                    avg_scores_string = ["%.3f" % avg for avg in avg_scores]
+                    avg_scores = np.mean(avg_scores)
+                    #avg_scores_string = ["%.3f" % avg for avg in avg_scores]
 
-                    print(f'TEST  %d:\t Avg Agent Rewards = %s' %(int(i / TEST_INDEX), avg_scores_string))
+                    print(f'TEST  %d:\t Avg Agent Rewards = %.3f' %(int(i / TEST_INDEX), avg_scores))
                     writer.writerow([i / TEST_INDEX, avg_scores])
                 else:
                     self.run(env, policies, False, verbose)
@@ -60,7 +61,7 @@ class Interactive():
         step_count = 0
         done_n = []
         scores = np.zeros(len(policies))
-        while step_count < 200 and sum(done_n) == 0:# and done_n == False:
+        while step_count < 200 and sum(done_n) == 0:
             # query for action from each agent's policy
             act_n = []
             for i, policy in enumerate(policies):
@@ -80,4 +81,4 @@ class Interactive():
             # display rewards
             #for agent in env.world.agents:
             #    print(agent.name + " reward: %0.3f" % env._get_reward(agent))
-            return scores
+        return scores

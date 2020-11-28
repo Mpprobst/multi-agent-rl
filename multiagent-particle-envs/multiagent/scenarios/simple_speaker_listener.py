@@ -40,7 +40,7 @@ class Scenario(BaseScenario):
         world.agents[0].goal_b = np.random.choice(world.landmarks)
         # random properties for agents
         for i, agent in enumerate(world.agents):
-            agent.color = np.array([0.25,0.25,0.25])               
+            agent.color = np.array([0.25,0.25,0.25])
         # random properties for landmarks
         world.landmarks[0].color = np.array([0.65,0.15,0.15])
         world.landmarks[1].color = np.array([0.15,0.65,0.15])
@@ -82,11 +82,11 @@ class Scenario(BaseScenario):
         for other in world.agents:
             if other is agent or (other.state.c is None): continue
             comm.append(other.state.c)
-        
+
         # speaker
         if not agent.movable:
             return np.concatenate([goal_color])
         # listener
         if agent.silent:
+            print(f'p_vel: {agent.state.p_vel} entity_pos: {entity_pos} comm: {comm}')
             return np.concatenate([agent.state.p_vel] + entity_pos + comm)
-            
