@@ -3,10 +3,12 @@ reinforce.py
 Author: Michael Probst
 Purpose: Implements an agent using the REINFORCE policy gradient algorithm
 """
+import multiagent
+import multiagent.policy as policy
 import gym
 import numpy as np
 import random
-import cnn
+import nn
 import torch as T
 import torch.nn.functional as F
 import torch.optim as optim
@@ -14,12 +16,21 @@ import torch.optim as optim
 GAMMA = 0.98
 BATCH_SIZE = 5
 
-class ReinforceAgent:
-    def __init__(self, env, lr):
-        self.name = 'REINFORCE'
-        self.epsilon = 1
-        self.n_actions = env.action_space.n
-        self.net = cnn.CNN(self.n_actions)
+class ReinforceAgent(policy.Policy):
+    def __init__(self, env, agent_index, lr):
+        super(ReinforceAgent, self).__init__()
+        self.id = agent_index
+        self.name = f'REINFORCE_{agent_index}'
+        #self.env = env
+        self.env = env
+        actions = env.action_space[self.id] # env.action_space is a list of Discrete actions for every agent
+        if isinstance(actions, multiagent.multi_discrete.MultiDiscrete):
+            self.action_space = actions.shape
+        else:
+            self.action_space = actions.n
+
+        self.observation_space = env.observation_space[self.id].shape[0]
+        self.net = nn.NN(self.observation_space, self.action_space)
         self.optimizer = optim.Adam(self.net.parameters(), lr=lr)
         self.recent_action = None
         self.rewards = []
@@ -30,13 +41,16 @@ class ReinforceAgent:
         self.max_ep_length = 0
         self.losses = []
 
-    def get_action(self, env, state):
-        probabilities = F.softmax(self.net.forward(state), dim=0)
+    def action(self, obs):
+        probabilities = F.softmax(self.net.forward(obs), dim=0)
         action_probs = T.distributions.Categorical(probabilities)
         action = action_probs.sample()
         log_probs = action_probs.log_prob(action)
         self.recent_action = log_probs
-        return action.item()
+
+        a = np.zeros(self.action_space)
+        a[action.item()] = 1
+        return np.concatenate([a, np.zeros(self.env.world.dim_c)])
 
     def update(self, reward):
         self.actions.append(self.recent_action)
