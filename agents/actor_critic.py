@@ -12,6 +12,7 @@ import ac_nn as nn
 import torch as T
 import torch.nn.functional as F
 import torch.optim as optim
+from torch.autograd import Variable
 
 GAMMA = 0.99
 
@@ -33,72 +34,45 @@ class ACAgent(policy.Policy):
         self.net = nn.NN(self.observation_space, self.action_space)
     
         self.recent_action = None
-        self.rewards = [] #To collect reward per episode
-        self.actions = [] #to store action  at last step of the episode??? why needed?
         self.gamma = GAMMA
 
     def action(self, obs):
-        print(self.observation_space, self.action_space)
-        print(np.array(obs).shape)
+        
         net_op, _ = self.net.forward(obs) #extract the policy output as prob over actions
-        print(net_op.shape)
+        #print(net_op.shape)
         probabilities = F.softmax(net_op, dim=0)
         action_probs = T.distributions.Categorical(probabilities)
         action = action_probs.sample()
-        log_probs = action_probs.log_prob(action)
-        self.recent_action = log_probs
-
+        log_prob = action_probs.log_prob(action)
+        self.log_prob = log_prob
+        #print(log_prob)
         a = np.zeros(self.action_space)
         a[action.item()] = 1
         return np.concatenate([a, np.zeros(self.env.world.dim_c)])
 
-    def update(self, reward):
-        self.actions.append(self.recent_action)
-        self.rewards.append(reward)
+    def update(self):
+        return None
+               
+    def learn(self, state, reward, state_, done):
+        self.net.optimizer.zero_grad() #need this else gradients will be accumulated
+       #push the tensors to the device
+        state = T.tensor([state], dtype=T.float).to(self.net.device)
+        state_ = T.tensor([state_], dtype=T.float).to(self.net.device)
+        reward = T.tensor(reward, dtype=T.float).to(self.net.device)
 
-    def learn(self):
-        " This is to learn one agent for actor critic:"
-        done = False
-        observation = self.env.reset()
-        print(observation)
-        score = 0
-        step = 0
-        while not done and step < 200:
-        #print('Let one episode begin')
-            #print(step)
-            action = self.action(observation) #Line 1 in while loop of pseudocode
-            observation_, reward, done, info = self.env.step(action) #Line 2 in while loop of pseudocode
-            score += reward
-            self.actor_critic.optimizer.zero_grad() #need this else gradients will be accumulated
-            #push the tensors to the device
-            observation = T.tensor([observation], dtype=T.float).to(self.net.device)
-            observation_ = T.tensor([observation_], dtype=T.float).to(self.net.device)
-            reward = T.tensor(reward, dtype=T.float).to(self.net.device)
-    
-            _, critic_value = self.net.forward(observation)
-            _, critic_value_ = self.net.forward(observation_)
-    
-            delta = reward + self.gamma*critic_value_*(1-int(done)) - critic_value #Line 3 in the while loop of pseudocode
-            critic_loss = delta**2 # Equivalent to Line 4 in the while loop of pseudocode
-            actor_loss = -self.log_prob*delta #Line 5 in the while loop of pseudocode
-           
-            (actor_loss + critic_loss).backward()
-            self.net.optimizer.step()
+        _, critic_value = self.net.forward(state)
+        _, critic_value_ = self.net.forward(state_)
 
-           
-            observation = observation_
-            step += 1
-           
-        self.update(reward)
-        
-        
-        
-        
-        
-        
-        
-        
-        
+        delta = reward + self.gamma*critic_value_*(1-int(done)) - critic_value #Line 3 in the while loop of pseudocode
+        critic_loss = delta**2 # Equivalent to Line 4 in the while loop of pseudocode
+        actor_loss = -self.log_prob*delta #Line 5 in the while loop of pseudocode
+        #print(actor_loss, critic_loss)
+        final_loss = actor_loss + critic_loss
+        final_loss = Variable(final_loss, requires_grad = True)
+        #print(final_loss)
+        final_loss.backward()
+        self.net.optimizer.step()
+       
         
         
         
