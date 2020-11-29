@@ -50,14 +50,14 @@ class Interactive():
 
                     print(f'TEST  %d:\t Avg Agent Rewards = %s' %(int(i / TEST_INDEX), avg_scores_string))
                     writer.writerow([i / TEST_INDEX, avg_scores])
-                else:
-                    if isinstance(policies[0], reinforce.ReinforceAgent):
-                        self.run(env, policies, False, verbose)
+                else:                    
+                    self.run(env, policies, False, verbose)
                     for policy in policies:
-                        policy.learn()
+                        policy.update()
 
     def run(self, env, policies, istest, verbose):
         obs_n = env.reset()
+        
         step_count = 0
         done_n = []
         scores = np.zeros(len(policies))
@@ -67,14 +67,15 @@ class Interactive():
             for i, policy in enumerate(policies):
                 act_n.append(policy.action(obs_n[i]))
             # step environment
-            
-            obs_n, reward_n, done_n, _ = env.step(act_n)
+            #print(act_n)
+            obs_n_, reward_n, done_n, _ = env.step(act_n)
+            #print(reward_n)
             step_count += 1
-
+            #print(reward_n)
             for i, policy in enumerate(policies):
                 scores[i] += reward_n[i]
                 if not istest:
-                    policy.update(reward_n[i])
+                    policy.learn(obs_n[i],reward_n[i],obs_n_[i],done_n[i])
             # render all agent views
             if verbose:
                 env.render()
