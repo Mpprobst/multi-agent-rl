@@ -4,12 +4,12 @@ sys.path.insert(1, os.path.join(sys.path[0], '..'))
 import argparse
 import numpy as np
 import csv
-
+import agents.reinforce as reinforce
 from multiagent.environment import MultiAgentEnv
 from multiagent.policy import InteractivePolicy
 import multiagent.scenarios as scenarios
 
-TEST_INDEX = 100   # test after every 10 training episodes
+TEST_INDEX = 10   # test after every 10 training episodes
 NUM_TESTS = 10
 
 class Interactive():
@@ -46,13 +46,13 @@ class Interactive():
                         scores.append(value)
 
                     avg_scores = np.mean(scores, axis=0)
-                    avg_scores = np.mean(avg_scores)
-                    #avg_scores_string = ["%.3f" % avg for avg in avg_scores]
+                    avg_scores_string = ["%.3f" % avg for avg in avg_scores]
 
-                    print(f'TEST  %d:\t Avg Agent Rewards = %.3f' %(int(i / TEST_INDEX), avg_scores))
+                    print(f'TEST  %d:\t Avg Agent Rewards = %s' %(int(i / TEST_INDEX), avg_scores_string))
                     writer.writerow([i / TEST_INDEX, avg_scores])
                 else:
-                    self.run(env, policies, False, verbose)
+                    if isinstance(policies[0], reinforce.ReinforceAgent):
+                        self.run(env, policies, False, verbose)
                     for policy in policies:
                         policy.learn()
 
@@ -61,12 +61,13 @@ class Interactive():
         step_count = 0
         done_n = []
         scores = np.zeros(len(policies))
-        while step_count < 200 and sum(done_n) == 0:
+        while step_count < 200 and sum(done_n) == 0:# and done_n == False:
             # query for action from each agent's policy
             act_n = []
             for i, policy in enumerate(policies):
                 act_n.append(policy.action(obs_n[i]))
             # step environment
+            
             obs_n, reward_n, done_n, _ = env.step(act_n)
             step_count += 1
 
