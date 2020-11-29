@@ -71,12 +71,4 @@ class ACAgent(policy.Policy):
         final_loss = Variable(final_loss, requires_grad = True)
         #print(final_loss)
         final_loss.backward()
-        self.net.optimizer.step()
-       
-        
-        
-        
-        
-        
-        
-        
+        self.net.optimizer.step()     
