@@ -4,7 +4,7 @@ sys.path.insert(1, os.path.join(sys.path[0], '..'))
 import argparse
 import numpy as np
 import csv
-
+import agents.reinforce as reinforce
 from multiagent.environment import MultiAgentEnv
 from multiagent.policy import InteractivePolicy
 import multiagent.scenarios as scenarios
@@ -51,7 +51,8 @@ class Interactive():
                     print(f'TEST  %d:\t Avg Agent Rewards = %s' %(int(i / TEST_INDEX), avg_scores_string))
                     writer.writerow([i / TEST_INDEX, avg_scores])
                 else:
-                    self.run(env, policies, False, verbose)
+                    if isinstance(policies[0], reinforce.ReinforceAgent):
+                        self.run(env, policies, False, verbose)
                     for policy in policies:
                         policy.learn()
 
@@ -66,6 +67,7 @@ class Interactive():
             for i, policy in enumerate(policies):
                 act_n.append(policy.action(obs_n[i]))
             # step environment
+            
             obs_n, reward_n, done_n, _ = env.step(act_n)
             step_count += 1
 
@@ -80,4 +82,4 @@ class Interactive():
             # display rewards
             #for agent in env.world.agents:
             #    print(agent.name + " reward: %0.3f" % env._get_reward(agent))
-            return scores
+        return scores
