@@ -16,7 +16,7 @@ from torch.autograd import Variable
 
 GAMMA = 0.99
 
-
+#It is closely based on https://github.com/philtabor/Actor-Critic-Methods-Paper-To-Code
 class ACAgent(policy.Policy):
     def __init__(self, env, agent_index, lr):
         super(ACAgent, self).__init__()
