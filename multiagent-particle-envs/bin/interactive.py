@@ -9,15 +9,10 @@ from multiagent.environment import MultiAgentEnv
 from multiagent.policy import InteractivePolicy
 import multiagent.scenarios as scenarios
 
-<<<<<<< HEAD
-TEST_INDEX = 10   # test after every 10 training episodes
-NUM_TESTS = 10
-=======
 from agents.coop_reinforce import CoopReinforce
 
 TEST_INDEX = 10   # test after every 100 training episodes
 NUM_TESTS = 5
->>>>>>> team-reinforce
 
 class Interactive():
     def __init__(self, scenario_file, episodes, good_agents, adversary_agents, verbose):
@@ -74,7 +69,7 @@ class Interactive():
                 act_n.append(policy.action(obs_n[i]))
 
             # step environment
-            
+
             obs_n, reward_n, done_n, _ = env.step(act_n)
             step_count += 1
 
