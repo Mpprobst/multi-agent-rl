@@ -6,14 +6,20 @@ Purpose: Solve Cartpole and Lunar Lander openAI gym environments
 import argparse
 import csv
 import double_dunk
-import agents.reinforce as reinforce
-import agents.actor_critic as ac
-import agents.random_agent as random_agent
-import bin.interactive as Interactive
+from agents.reinforce import ReinforceAgent
+from agents.actor_critic import ACAgent
+from agents.random_agent import RandomAgent
+from agents.coop_reinforce import CoopReinforce
+from  bin.interactive import Interactive
+from  bin.coop_interactive import CoopInteractive
 
-AGENT_MAP = {'reinforce' : reinforce.ReinforceAgent,
-             'ac' : ac.ACAgent,
-             'random' : random_agent.RandomAgent }
+
+AGENT_MAP = {'reinforce' : ReinforceAgent,
+             'ac' : ACAgent,
+             'random' : RandomAgent }
+
+COOP_AGENT_MAP = {'reinforce' : CoopReinforce,
+                  'random' : RandomAgent }
 
 parser = argparse.ArgumentParser(description='Define the problem to solve.')
 parser.add_argument('--agent1', choices=AGENT_MAP.keys(), default='random', help='Can be ac, reinforce, or random')
@@ -21,11 +27,18 @@ parser.add_argument('--agent2', choices=AGENT_MAP.keys(), default='random', help
 parser.add_argument('-s', '--scenario', default='simple.py', help='Path of the scenario Python script.')
 parser.add_argument('--episodes', type=int, default = 500, help='Number of episodes you want the agent to run.')
 parser.add_argument('--verbose', help='Visualize the environment.', action='store_true')
+parser.add_argument('--coop', help='Choose coop agents if true, else independent agents.', action='store_true')
+
 args = parser.parse_args()
 
-agent_func1 = AGENT_MAP[args.agent1]
-agent_func2 = AGENT_MAP[args.agent1]
+agents = AGENT_MAP
+if args.coop:
+    agents = COOP_AGENT_MAP
 
-Interactive.Interactive(args.scenario, args.episodes, agent_func1, agent_func2, args.verbose)
+agent_func1 = agents[args.agent1]
+agent_func2 = agents[args.agent2]
 
-#env = double_dunk.DoubleDunk(args.episodes, agent_func, args.verbose)
+if args.coop:
+    CoopInteractive(args.scenario, args.episodes, agent_func1, agent_func2, args.verbose)
+else:
+    Interactive(args.scenario, args.episodes, agent_func1, agent_func2, args.verbose)

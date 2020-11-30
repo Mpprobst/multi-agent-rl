@@ -4,22 +4,17 @@ sys.path.insert(1, os.path.join(sys.path[0], '..'))
 import argparse
 import numpy as np
 import csv
-import agents.reinforce as reinforce
+
 from multiagent.environment import MultiAgentEnv
 from multiagent.policy import InteractivePolicy
 import multiagent.scenarios as scenarios
 
-<<<<<<< HEAD
-TEST_INDEX = 10   # test after every 10 training episodes
-NUM_TESTS = 10
-=======
 from agents.coop_reinforce import CoopReinforce
 
-TEST_INDEX = 10   # test after every 100 training episodes
-NUM_TESTS = 5
->>>>>>> team-reinforce
+TEST_INDEX = 10   # test after every 10 training episodes
+NUM_TESTS = 10
 
-class Interactive():
+class CoopInteractive():
     def __init__(self, scenario_file, episodes, good_agents, adversary_agents, verbose):
         # load scenario from script
         scenario = scenarios.load(scenario_file).Scenario()
@@ -31,7 +26,7 @@ class Interactive():
         if verbose:
             env.render()
         "TODO: determine which agents are good and bad and give them different policies"
-        policies = [good_agents(env, i, 0.01) for i in range(env.n)]
+        agent = good_agents(env, env.n, 0.1)
 
         # find directory to save results
         current_directory = os.path.dirname(__file__)
@@ -39,7 +34,8 @@ class Interactive():
         parent_directory = os.path.split(parent_directory)[0]
 
         scenario_name = os.path.splitext(scenario_file)[0]
-        filename = f'{parent_directory}/results/{scenario_name}_{policies[0].name}.csv'
+        filename = f'{parent_directory}/results/{scenario_name}_{agent.name}.csv'
+        print(filename)
         with open(filename, 'w', newline = '') as csvfile:
             writer = csv.writer(csvfile, delimiter = ',')
 
@@ -48,42 +44,39 @@ class Interactive():
                 if i % TEST_INDEX == 0:
                     scores = []
                     for t in range(NUM_TESTS):
-                        value = self.run(env, policies, True, verbose)
+                        value = self.run(env, agent, True, verbose)
                         scores.append(value)
 
                     avg_scores = np.mean(scores, axis=0)
-                    avg_scores_string = ["%.3f" % avg for avg in avg_scores]
+                    avg_scores = np.mean(avg_scores)
+                    #avg_scores_string = ["%.3f" % avg for avg in avg_scores]
 
-                    print(f'TEST  %d:\t Avg Agent Rewards = %s' %(int(i / TEST_INDEX), avg_scores_string))
+                    print(f'TEST  %d:\t Avg Agent Rewards = %.3f' %(int(i / TEST_INDEX), avg_scores))
                     writer.writerow([i / TEST_INDEX, avg_scores])
                 else:
-                    if isinstance(policies[0], reinforce.ReinforceAgent):
-                        self.run(env, policies, False, verbose)
-                    for policy in policies:
-                        policy.learn()
+                    self.run(env, agent, False, verbose)
+                    agent.learn()
 
-    def run(self, env, policies, istest, verbose):
+    def run(self, env, agent, istest, verbose):
+        num_agents = env.n
         obs_n = env.reset()
         step_count = 0
         done_n = []
-        scores = np.zeros(len(policies))
-        while step_count < 200 and sum(done_n) == 0:# and done_n == False:
+        scores = np.zeros(num_agents)
+        while step_count < 200 and sum(done_n) == 0:
             # query for action from each agent's policy
-            act_n = []
-            for i, policy in enumerate(policies):
-                act_n.append(policy.action(obs_n[i]))
-
+            act_n = agent.action(obs_n)
             # step environment
-            
             obs_n, reward_n, done_n, _ = env.step(act_n)
             step_count += 1
-
-            for i, policy in enumerate(policies):
+            #print(f'scores: {scores} rewards: {reward_n}')
+            for i in range(num_agents):
                 scores[i] += reward_n[i]
-                if not istest:
-                    policy.update(reward_n[i])
+
+            if not istest:
+                agent.update(reward_n)
             # render all agent views
-            if verbose and istest:
+            if verbose:
                 env.render()
 
             # display rewards

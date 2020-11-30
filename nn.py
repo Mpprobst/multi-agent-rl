@@ -12,9 +12,9 @@ class NN(nn.Module):
         super(NN, self).__init__()
         self.outputDims = outputDims
         self.inputDims = inputDims
-        self.fc1 = nn.Linear(self.inputDims, 32)    #first layer
-        self.fc2 = nn.Linear(32, 16)                #second layer
-        self.fc3 = nn.Linear(16, self.outputDims)   #output layer
+        self.fc1 = nn.Linear(self.inputDims, 64)    #first layer
+        self.fc2 = nn.Linear(64, 32)                #second layer
+        self.fc3 = nn.Linear(32, self.outputDims)   #output layer
         self.device = T.device('cpu')
         self.to(self.device)
 

@@ -30,6 +30,8 @@ class ReinforceAgent(policy.Policy):
             self.action_space = actions.n
 
         self.observation_space = env.observation_space[self.id].shape[0]
+        print(f'total obs: {self.observation_space} total actions: {self.action_space}')
+
         self.net = nn.NN(self.observation_space, self.action_space)
         self.optimizer = optim.Adam(self.net.parameters(), lr=lr)
         self.recent_action = None
@@ -41,15 +43,25 @@ class ReinforceAgent(policy.Policy):
         self.max_ep_length = 0
         self.losses = []
 
+    # sometimes the observation is not the correct size, this enforces the obs to be a sigular size
+    def fix_obs(self, obs):
+        resize = []
+        # ensure obs is the proper length
+        for i in range(self.observation_space):
+            if i < len(obs):
+                resize.append(obs[i])
+            else:
+                resize.append(0)
+        return resize
+
     def action(self, obs):
         #print(f'{self.name} saw obs size {len(obs)}. expects size {self.observation_space}')
-
+        obs = self.fix_obs(obs)
         probabilities = F.softmax(self.net.forward(obs), dim=0)
         action_probs = T.distributions.Categorical(probabilities)
         action = action_probs.sample()
         log_probs = action_probs.log_prob(action)
         self.recent_action = log_probs
-
         a = np.zeros(self.action_space)
         a[action.item()] = 1
         return np.concatenate([a, np.zeros(self.env.world.dim_c)])
@@ -103,6 +115,7 @@ class ReinforceAgent(policy.Policy):
 
             self.action_memory = []
             self.return_memory = []
+            self.reward_memory = []
             self.max_ep_length = 0
 
         self.actions = []
