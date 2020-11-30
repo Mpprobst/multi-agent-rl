@@ -9,7 +9,8 @@ from multiagent.environment import MultiAgentEnv
 from multiagent.policy import InteractivePolicy
 import multiagent.scenarios as scenarios
 
-from agents.coop_reinforce import CoopReinforce
+from agents.multiactor_singlecritic import Critic
+from agents.multiactor_singlecritic import MASCAgent
 
 TEST_INDEX = 10   # test after every 100 training episodes
 NUM_TESTS = 5
@@ -26,7 +27,13 @@ class Interactive():
         if verbose:
             env.render()
         "TODO: determine which agents are good and bad and give them different policies"
+
         policies = [good_agents(env, i, 0.01) for i in range(env.n)]
+        if isinstance(policies[0], MASCAgent):
+            critic = Critic(env, 0.01)
+            print('it do be MASC')
+            for policy in policies:
+                policy.assign_critic(critic)
 
         # find directory to save results
         current_directory = os.path.dirname(__file__)

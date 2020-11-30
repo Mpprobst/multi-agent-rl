@@ -68,6 +68,7 @@ class ACAgent(policy.Policy):
        #push the tensors to the device
         state = self.fix_obs(state)
         state_ = self.fix_obs(state_)
+        
         state = T.tensor([state], dtype=T.float).to(self.net.device)
         state_ = T.tensor([state_], dtype=T.float).to(self.net.device)
         reward = T.tensor(reward, dtype=T.float).to(self.net.device)
