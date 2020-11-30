@@ -83,4 +83,5 @@ class Interactive():
             # display rewards
             #for agent in env.world.agents:
             #    print(agent.name + " reward: %0.3f" % env._get_reward(agent))
+            obs_n = obs_n_
         return scores
