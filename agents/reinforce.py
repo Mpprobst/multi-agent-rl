@@ -66,11 +66,11 @@ class ReinforceAgent(policy.Policy):
         a[action.item()] = 1
         return np.concatenate([a, np.zeros(self.env.world.dim_c)])
 
-    def update(self, reward):
+    def learn(self, state, reward, state_, done):
         self.actions.append(self.recent_action)
         self.rewards.append(reward)
 
-    def learn(self):
+    def update(self):
         #print(f'learning on: {self.rewards}')
         Gt = np.zeros_like(self.rewards, dtype=np.float64)
         for t in range(len(self.rewards)):

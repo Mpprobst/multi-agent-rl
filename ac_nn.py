@@ -19,7 +19,7 @@ class NN(nn.Module):# The actor critic network. 2 hidden layers are shared with 
         self.policy = nn.Linear(fc2_dims, actions_size)
         self.value = nn.Linear(fc2_dims, 1)
         self.optimizer = optim.Adam(self.parameters(), lr=lr)
-        
+
         self.device = T.device('cuda:0' if T.cuda.is_available() else 'cpu')
         self.to(self.device)
 
@@ -27,7 +27,7 @@ class NN(nn.Module):# The actor critic network. 2 hidden layers are shared with 
         state = T.tensor(state).to(self.device).float()
         x = F.relu(self.fc1(state))
         x = F.relu(self.fc2(x))
-        policy = T.tensor(self.policy(x))
-        value = T.tensor(self.value(x))
+        policy = T.tensor(self.policy(x)).to(self.device).float()
+        value = T.tensor(self.value(x)).to(self.device).float()
 
         return (policy, value)

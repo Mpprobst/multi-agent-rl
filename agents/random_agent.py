@@ -20,16 +20,16 @@ class RandomAgent(policy.Policy):
             self.action_space = actions.shape
         else:
             self.action_space = actions.n
-        print(self.action_space)
+        #print(self.action_space)
 
     # returns an action randomly.
     def action(self, state):
-        a = np.zeros(self.actions)
-        a[random.randrange(0, self.actions)] = 1
+        a = np.zeros(self.action_space)
+        a[random.randrange(0, self.action_space)] = 1
         return np.concatenate([a, np.zeros(self.env.world.dim_c)])
 
-    def update(self, reward):
+    def update(self):
         return 0
 
-    def learn(self):
+    def learn(self, state, reward, state_, done):
         return 0
