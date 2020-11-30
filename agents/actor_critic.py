@@ -22,7 +22,6 @@ class ACAgent(policy.Policy):
         super(ACAgent, self).__init__()
         self.id = agent_index
         self.name = f'ActorCritic_{agent_index}'
-        #self.env = env
         self.env = env
         actions = env.action_space[self.id] # env.action_space is a list of Discrete actions for every agent
         if isinstance(actions, multiagent.multi_discrete.MultiDiscrete):
@@ -31,13 +30,24 @@ class ACAgent(policy.Policy):
             self.action_space = actions.n
 
         self.observation_space = env.observation_space[self.id].shape[0]
-        self.net = nn.NN(self.observation_space, self.action_space)
+        print(f'total obs: {self.observation_space} total actions: {self.action_space}')
 
-        self.recent_action = None
+        self.net = nn.NN(self.observation_space, self.action_space, lr=lr)
         self.gamma = GAMMA
 
-    def action(self, obs):
+    # sometimes the observation is not the correct size, this enforces the obs to be a sigular size
+    def fix_obs(self, obs):
+        resize = []
+        # ensure obs is the proper length
+        for i in range(self.observation_space):
+            if i < len(obs):
+                resize.append(obs[i])
+            else:
+                resize.append(0)
+        return resize
 
+    def action(self, obs):
+        obs = self.fix_obs(obs)
         net_op, _ = self.net.forward(obs) #extract the policy output as prob over actions
         #print(net_op.shape)
         probabilities = F.softmax(net_op, dim=0)
@@ -56,6 +66,8 @@ class ACAgent(policy.Policy):
     def learn(self, state, reward, state_, done):
         self.net.optimizer.zero_grad() #need this else gradients will be accumulated
        #push the tensors to the device
+        state = self.fix_obs(state)
+        state_ = self.fix_obs(state_)
         state = T.tensor([state], dtype=T.float).to(self.net.device)
         state_ = T.tensor([state_], dtype=T.float).to(self.net.device)
         reward = T.tensor(reward, dtype=T.float).to(self.net.device)

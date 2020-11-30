@@ -47,9 +47,9 @@ class Interactive():
                         scores.append(value)
 
                     avg_scores = np.mean(scores, axis=0)
-                    avg_scores_string = ["%.3f" % avg for avg in avg_scores]
+                    avg_scores = np.mean(avg_scores)
 
-                    print(f'TEST  %d:\t Avg Agent Rewards = %s' %(int(i / TEST_INDEX), avg_scores_string))
+                    print(f'TEST  %d:\t Avg Agent Rewards = %.3f' %(int(i / TEST_INDEX), avg_scores))
                     writer.writerow([i / TEST_INDEX, avg_scores])
                 else:
                     self.run(env, policies, False, verbose)
@@ -69,15 +69,13 @@ class Interactive():
                 act_n.append(policy.action(obs_n[i]))
 
             # step environment
-            #print(act_n)
             obs_n_, reward_n, done_n, _ = env.step(act_n)
-            #print(reward_n)
             step_count += 1
-            #print(reward_n)
             for i, policy in enumerate(policies):
                 scores[i] += reward_n[i]
                 if not istest:
                     policy.learn(obs_n[i],reward_n[i],obs_n_[i],done_n[i])
+
             # render all agent views
             if verbose and istest:
                 env.render()

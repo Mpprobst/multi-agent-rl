@@ -12,12 +12,14 @@ import torch.nn.functional as F
 import torch.optim as optim
 
 class NN(nn.Module):# The actor critic network. 2 hidden layers are shared with separate final layer for actor and critic each.
-    def __init__(self,input_size, actions_size,fc1_dims=128, fc2_dims=256,lr=0.001):
+    def __init__(self,input_size, actions_size, fc1_dims=128, fc2_dims=64, fc3_dims=32, lr=0.01):
         super(NN, self).__init__()
         self.fc1 = nn.Linear(input_size, fc1_dims)
         self.fc2 = nn.Linear(fc1_dims, fc2_dims)
-        self.policy = nn.Linear(fc2_dims, actions_size)
-        self.value = nn.Linear(fc2_dims, 1)
+        self.fc3 = nn.Linear(fc2_dims, fc3_dims)
+
+        self.policy = nn.Linear(fc3_dims, actions_size)
+        self.value = nn.Linear(fc3_dims, 1)
         self.optimizer = optim.Adam(self.parameters(), lr=lr)
 
         self.device = T.device('cuda:0' if T.cuda.is_available() else 'cpu')
@@ -27,6 +29,7 @@ class NN(nn.Module):# The actor critic network. 2 hidden layers are shared with 
         state = T.tensor(state).to(self.device).float()
         x = F.relu(self.fc1(state))
         x = F.relu(self.fc2(x))
+        x = F.relu(self.fc3(x))
         policy = T.tensor(self.policy(x)).to(self.device).float()
         value = T.tensor(self.value(x)).to(self.device).float()
 
