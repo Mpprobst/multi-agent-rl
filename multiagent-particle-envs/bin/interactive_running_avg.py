@@ -30,7 +30,7 @@ class Interactive():
         if verbose:
             env.render()
 
-        run_avg_window = 1000
+        run_avg_window = 10
         train_ep_rewards = np.array([]) #average scores for each episode
         train_run_avg = np.array([]) #running average for 1000 previous episodes to capture the learning trend
                 # create interactive policies for each agent
@@ -50,7 +50,7 @@ class Interactive():
             train_ep_reward = self.run(env, policies, False, verbose)
             train_ep_reward = np.mean(np.array(train_ep_reward)) #average score per episode : it is averaged across the scores for each agent
             train_ep_rewards = np.append(train_ep_rewards,train_ep_reward) #store that average score per episode
-            
+
             run_avg_ep_score = np.mean(train_ep_rewards[-run_avg_window:]) # Running average for the last 10000 episodes of training
             train_run_avg = np.append(train_run_avg, run_avg_ep_score)
             if i % run_avg_window == 0:
