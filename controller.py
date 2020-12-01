@@ -9,7 +9,7 @@ from agents.actor_critic import ACAgent
 from agents.random_agent import RandomAgent
 from agents.coop_reinforce import CoopReinforce
 from agents.multiactor_singlecritic import MASCAgent
-from  bin.interactive import Interactive
+from  bin.interactive_running_avg import Interactive
 from  bin.coop_interactive import CoopInteractive
 
 
@@ -28,17 +28,10 @@ parser.add_argument('-s', '--scenario', default='simple.py', help='Path of the s
 parser.add_argument('--episodes', type=int, default = 5, help='Number of episodes you want the agent to run.')
 parser.add_argument('--verbose', help='Visualize the environment.', action='store_true')
 parser.add_argument('--coop', help='Choose coop agents if true, else independent agents.', action='store_true')
-
 args = parser.parse_args()
 
 agents = AGENT_MAP
 if args.coop:
     agents = COOP_AGENT_MAP
 
-agent_func1 = agents[args.agent1]
-agent_func2 = agents[args.agent2]
-
-if args.coop:
-    CoopInteractive(args.scenario, args.episodes, agent_func1, agent_func2, args.verbose)
-else:
-    Interactive(args.scenario, args.episodes, agent_func1, agent_func2, args.verbose)
+Interactive.Interactive(args.scenario, args.episodes, agent_func1, agent_func2, args.verbose)
