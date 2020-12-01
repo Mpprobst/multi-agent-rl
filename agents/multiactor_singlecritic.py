@@ -113,8 +113,8 @@ class MASCAgent(policy.Policy):
 
         actor_loss = -self.log_prob * delta
         critic_loss = delta**2
-
-        (actor_loss + critic_loss).backward()
+        loss = actor_loss + critic_loss
+        loss.backward()
 
         self.actor.optimizer.step()
         self.critic.optimizer.step()
