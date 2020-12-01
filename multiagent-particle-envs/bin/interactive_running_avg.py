@@ -29,7 +29,7 @@ class Interactive():
         # render call to create viewer window (necessary only for interactive policies)
         if verbose:
             env.render()
-       
+
         run_avg_window = 1000
         train_ep_rewards = np.array([]) #average scores for each episode
         train_run_avg = np.array([]) #running average for 1000 previous episodes to capture the learning trend
@@ -44,17 +44,17 @@ class Interactive():
         scenario_name = os.path.splitext(scenario_file)[0]
         scores_filename = f'{parent_directory}/results/{scenario_name}_{policies[0].name}_scores.npy'
         run_avg_filename = f'{parent_directory}/results/{scenario_name}_{policies[0].name}_run_avg.npy'
-       
+
         # execution loop
         for i in range(episodes+1):
             train_ep_reward = self.run(env, policies, False, verbose)
             train_ep_reward = np.mean(np.array(train_ep_reward)) #average score per episode : it is averaged across the scores for each agent
-            train_ep_rewards = np.append(train_ep_rewards,train_ep_reward) #store that average score per episode 
+            train_ep_rewards = np.append(train_ep_rewards,train_ep_reward) #store that average score per episode
             
             run_avg_ep_score = np.mean(train_ep_rewards[-run_avg_window:]) # Running average for the last 10000 episodes of training
             train_run_avg = np.append(train_run_avg, run_avg_ep_score)
             if i % run_avg_window == 0:
-                
+
                 print('episode ',i, 'score %.3f' % train_ep_reward,
             'Running average score %.3f' % run_avg_ep_score)
 
@@ -62,9 +62,10 @@ class Interactive():
                 policy.update()
         np.save(scores_filename,train_ep_rewards)
         np.save(run_avg_filename,train_run_avg)
+
     def run(self, env, policies, istest, verbose):
         obs_n = env.reset()
-        
+
         step_count = 0
         done_n = []
         scores = np.zeros(len(policies))
