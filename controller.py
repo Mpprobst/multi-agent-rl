@@ -11,7 +11,7 @@ import agents.actor_critic as ac
 import agents.random_agent as random_agent
 import sys
 sys.path.append("/Users/subashkhanal/Desktop/Fall_2020/Sequential_Decision_Making/Final_Project/multi-agent-rl/multiagent-particle-envs/bin")
-import interactive as Interactive
+import interactive_running_avg as Interactive
 
 AGENT_MAP = {'reinforce' : reinforce.ReinforceAgent,
              'ac' : ac.ACAgent,
@@ -23,11 +23,10 @@ parser.add_argument('--agent2', choices=AGENT_MAP.keys(), default='random', help
 parser.add_argument('-s', '--scenario', default='simple.py', help='Path of the scenario Python script.')
 parser.add_argument('--episodes', type=int, default = 5, help='Number of episodes you want the agent to run.')
 parser.add_argument('--verbose', help='Visualize the environment.', action='store_true')
+parser.add_argument('--window',type=int, default = 100, help='Running average window size.')
 args = parser.parse_args()
 
 agent_func1 = AGENT_MAP[args.agent1]
 agent_func2 = AGENT_MAP[args.agent1]
 
-Interactive.Interactive(args.scenario, args.episodes, agent_func1, agent_func2, args.verbose)
-
-#env = double_dunk.DoubleDunk(args.episodes, agent_func, args.verbose)
+Interactive.Interactive(args.scenario, args.episodes, agent_func1, agent_func2, args.verbose,args.window)
