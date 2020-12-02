@@ -7,4 +7,7 @@ This reposistory contains an attempt to solve multi-agent environments using pol
 ## Using this repo
 A simple scenario can be run by entering the command `python controller.py` which will run in default settings. There are more parameters that can be used to modify the test that you want to run. Enter `python controller.py --help` for more info on those parameters.
 
+## Video Presentation
+This is a video presenting our findings.
+
 [Video Presentation](https://www.youtube.com/watch?v=YghnwiX2x-8&feature=emb_title)
