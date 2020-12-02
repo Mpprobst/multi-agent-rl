@@ -22,7 +22,6 @@ parser.add_argument('-f', default='simple.py', help='Path of the file to read Py
 args = parser.parse_args()
 
 run_avg = []
-"""
 with open(filename,'r') as infile:
     txt = infile.read()
     txt = txt.split('\n')[2:-1]
@@ -36,6 +35,7 @@ with open(args.f, newline='') as csvfile:
     for row in reader:
         print(row)
         run_avg.append(row[1])
+"""
 
 #numpy_file = 'simple_500_10.npy'
 numpy_file = 'simpleWorldComm_4_50_10.npy'

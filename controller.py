@@ -18,12 +18,11 @@ AGENT_MAP = {'reinforce' : ReinforceAgent,
              'masc' : MASCAgent,
              'random' : RandomAgent }
 
-COOP_AGENT_MAP = {'reinforce' : CoopReinforce,
-                  'random' : RandomAgent }
+COOP_AGENT_MAP = {'reinforce' : CoopReinforce}
 
 parser = argparse.ArgumentParser(description='Define the problem to solve.')
-parser.add_argument('--agent1', choices=AGENT_MAP.keys(), default='ac', help='Can be ac, reinforce, masc, or random')
-parser.add_argument('--agent2', choices=AGENT_MAP.keys(), default='random', help='Can be ac, reinforce, or random')
+parser.add_argument('--agent1', choices=AGENT_MAP.keys(), default='reinforce', help='Can be ac, reinforce, masc, or random')
+parser.add_argument('--agent2', choices=AGENT_MAP.keys(), default='reinforce', help='Can be ac, reinforce, or random')
 parser.add_argument('-s', '--scenario', default='simple.py', help='Path of the scenario Python script.')
 parser.add_argument('--episodes', type=int, default = 5, help='Number of episodes you want the agent to run.')
 parser.add_argument('--verbose', help='Visualize the environment.', action='store_true')
@@ -34,4 +33,10 @@ agents = AGENT_MAP
 if args.coop:
     agents = COOP_AGENT_MAP
 
-Interactive.Interactive(args.scenario, args.episodes, agent_func1, agent_func2, args.verbose)
+agent_func1 = agents[args.agent1]
+agent_func2 = agents[args.agent2]
+
+if args.coop:
+    CoopInteractive(args.scenario, args.episodes, agent_func1, agent_func2, args.verbose)
+else:
+    Interactive(args.scenario, args.episodes, agent_func1, agent_func2, args.verbose)

@@ -104,7 +104,8 @@ class ReinforceAgent(policy.Policy):
                 for g, logprob in zip(self.return_memory[batch], self.action_memory[batch]):
                     loss += (g - avgReturn[baseline_index]) * -logprob
                     baseline_index += 1
-                losses.append(loss)
+                if loss != 0:
+                    losses.append(loss)
 
             loss = T.mean(T.stack(losses))
             self.optimizer.zero_grad()

@@ -5,15 +5,13 @@ import argparse
 import numpy as np
 import csv
 import agents.reinforce as reinforce
+import agents.multiactor_singlecritic as MASCAgent
 from multiagent.environment import MultiAgentEnv
 from multiagent.policy import InteractivePolicy
 import multiagent.scenarios as scenarios
 
-from agents.multiactor_singlecritic import Critic
-from agents.multiactor_singlecritic import MASCAgent
-
-TEST_INDEX = 10   # test after every 100 training episodes
-NUM_TESTS = 5
+TEST_INDEX = 1000   # test after every 10 training episodes
+NUM_TESTS = 10
 
 class Interactive():
     def __init__(self, scenario_file, episodes, good_agents, adversary_agents, verbose):
@@ -27,13 +25,12 @@ class Interactive():
         if verbose:
             env.render()
         "TODO: determine which agents are good and bad and give them different policies"
-
+        # create interactive policies for each agent
         policies = [good_agents(env, i, 0.01) for i in range(env.n)]
-        if isinstance(policies[0], MASCAgent):
-            critic = Critic(env, 0.01)
-            print('it do be MASC')
+        if isinstance(policies[0], MASCAgent.MASCAgent:
+            critic = MASCAgent.Critic(env, 0.01)
             for policy in policies:
-                policy.assign_critic(critic)
+                policy.critic = critic
 
         # find directory to save results
         current_directory = os.path.dirname(__file__)
@@ -54,9 +51,9 @@ class Interactive():
                         scores.append(value)
 
                     avg_scores = np.mean(scores, axis=0)
-                    avg_scores = np.mean(avg_scores)
+                    avg_scores_string = ["%.3f" % avg for avg in avg_scores]
 
-                    print(f'TEST  %d:\t Avg Agent Rewards = %.3f' %(int(i / TEST_INDEX), avg_scores))
+                    print(f'TEST  %d:\t Avg Agent Rewards = %s' %(int(i / TEST_INDEX), avg_scores_string))
                     writer.writerow([i / TEST_INDEX, avg_scores])
                 else:
                     self.run(env, policies, False, verbose)
@@ -74,17 +71,18 @@ class Interactive():
             act_n = []
             for i, policy in enumerate(policies):
                 act_n.append(policy.action(obs_n[i]))
-
             # step environment
+            #print(act_n)
             obs_n_, reward_n, done_n, _ = env.step(act_n)
+            #print(reward_n)
             step_count += 1
+            #print(reward_n)
             for i, policy in enumerate(policies):
                 scores[i] += reward_n[i]
                 if not istest:
                     policy.learn(obs_n[i],reward_n[i],obs_n_[i],done_n[i])
-
             # render all agent views
-            if verbose and istest:
+            if verbose:
                 env.render()
 
             # display rewards

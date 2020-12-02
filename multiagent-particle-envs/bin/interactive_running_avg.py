@@ -13,6 +13,7 @@ import argparse
 import numpy as np
 import csv
 import agents.reinforce as reinforce
+import agents.multiactor_singlecritic as MASCAgent
 from multiagent.environment import MultiAgentEnv
 from multiagent.policy import InteractivePolicy
 import multiagent.scenarios as scenarios
@@ -34,8 +35,12 @@ class Interactive():
         train_ep_rewards = np.array([]) #average scores for each episode
         train_run_avg = np.array([]) #running average for 1000 previous episodes to capture the learning trend
                 # create interactive policies for each agent
-        policies = [good_agents(env, i, 0.1) for i in range(env.n)]
-
+        policies = [good_agents(env, i, 0.01) for i in range(env.n)]
+        # create MASC agent if needed
+        if isinstance(policies[0], MASCAgent.MASCAgent):
+            critic = MASCAgent.Critic(env, 0.01)
+            for policy in policies:
+                policy.critic = critic
         # find directory to save results
         current_directory = os.path.dirname(__file__)
         parent_directory = os.path.split(current_directory)[0]
@@ -47,7 +52,10 @@ class Interactive():
 
         # execution loop
         for i in range(episodes+1):
-            train_ep_reward = self.run(env, policies, False, verbose)
+            istest = False
+            if i % run_avg_window == 0:
+                istest = True
+            train_ep_reward = self.run(env, policies, istest, verbose)
             train_ep_reward = np.mean(np.array(train_ep_reward)) #average score per episode : it is averaged across the scores for each agent
             train_ep_rewards = np.append(train_ep_rewards,train_ep_reward) #store that average score per episode
 
@@ -85,7 +93,7 @@ class Interactive():
                 if not istest:
                     policy.learn(obs_n[i],reward_n[i],obs_n_[i],done_n[i])
             # render all agent views
-            if verbose:
+            if verbose and istest:
                 env.render()
 
             # display rewards
